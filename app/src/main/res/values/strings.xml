@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">WeatherApp</string>
+    <string name="cancel">Cancel</string>
+    <string name="menu_add">Add new location</string>
+    <string name="dialog_add_weather_title">Add new location</string>
+    <string name="dialog_add_weather_button_success">Add</string>
+    <string name="dialog_add_weather_hint">City name</string>
 </resources>
