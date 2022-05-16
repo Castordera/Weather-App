@@ -15,5 +15,9 @@
     <fragment
         android:id="@+id/weatherDetailFragment"
         android:name="com.architechcoders.weather.ui.fragments.detail.WeatherDetailFragment"
-        android:label="WeatherDetailFragment" />
+        android:label="WeatherDetailFragment" >
+        <argument
+            android:name="weatherId"
+            app:argType="integer" />
+    </fragment>
 </navigation>

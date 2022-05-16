@@ -4,37 +4,51 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.architechcoders.domain.Errors
 import com.architechcoders.domain.Weather
+import com.architechcoders.usecase.AddNewWeatherUseCase
+import com.architechcoders.usecase.GetCurrentLocationWeatherUseCase
+import com.architechcoders.usecase.GetWeathersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class WeatherMainViewModel @Inject constructor(
-
+    getWeathersUseCase: GetWeathersUseCase,
+    private val addNewWeatherUseCase: AddNewWeatherUseCase,
+    private val getCurrentLocationWeatherUseCase: GetCurrentLocationWeatherUseCase
 ): ViewModel() {
 
-    //
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> get() = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
-            val weather = Weather("Varsovia", "Soleado", 37.0f, 20f, 15f, 14f, true)
-            val weather2 = Weather("Varsovia", "Soleado", 37.0f, 20f, 15f, 14f, false)
-            _uiState.update { it.copy(weatherList = listOf(weather, weather2)) }
+            getWeathersUseCase()
+                .catch {  }
+                .collect { list -> _uiState.update { it.copy(weatherList = list) } }
         }
     }
 
-    fun onAddNewWeatherLocation(string: String) {
-
+    fun onAddNewWeatherLocation(city: String) {
+        viewModelScope.launch {
+            val response = addNewWeatherUseCase(city)
+            _uiState.update { it.copy(error = response) }
+        }
     }
 
-    fun onLocationPermissionReady() {
+    fun onLocationPermissionReady(permissionGranted: Boolean) {
+        viewModelScope.launch {
+            if (permissionGranted) {
+                val response = getCurrentLocationWeatherUseCase()
+                _uiState.update { it.copy(error = response) }
+//                println("DEMO, VM => $response")
+            }
+        }
+    }
 
+    fun onErrorHandled() {
+        _uiState.update { it.copy(error = null) }
     }
 
     data class UiState(

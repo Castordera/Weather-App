@@ -4,11 +4,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
+        <import
+            alias="WeatherExt"
+            type="com.architechcoders.domain.WeatherKt"/>
+        <variable
+            name="weather"
+            type="com.architechcoders.domain.Weather"/>
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:background="@color/purple_200"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -20,18 +24,24 @@
             <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:background="@android:color/transparent"
-                app:statusBarScrim="@color/purple_200"
+                app:expandedTitleTextColor="@color/white"
+                app:collapsedTitleTextColor="@color/white"
+                app:statusBarScrim="@color/black"
                 app:contentScrim="@color/purple_200"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:bgDayTime="@{weather != null ? WeatherExt.isDayTime(weather) : false}"
+                    />
 
                 <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/movie_detail_toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     app:layout_collapseMode="pin"
-                    app:title="City name"
-                    app:subtitle="asdasdasdasdasd" />
+                    app:title="@{weather.cityName}"/>
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -40,6 +50,8 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            tools:background="@color/purple_200"
+            app:bgDayTime="@{weather != null ? WeatherExt.isDayTime(weather) : false}"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -52,6 +64,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
+                    app:lastUpdate="@{weather.timeRequested}"
+                    app:timezone="@{weather.timezone}"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     tools:text="Actualizado hace 30 minuts" />
@@ -60,6 +74,7 @@
                     android:id="@+id/weather_temperature"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    app:temperature="@{weather.temperature}"
                     android:textSize="80sp"
                     android:textColor="@color/white"
                     app:layout_constraintTop_toTopOf="parent"
@@ -76,10 +91,23 @@
                     android:paddingVertical="3dp"
                     android:gravity="center"
                     tools:text="30C"
+                    app:temperature="@{weather.feelsLikeTemperature}"
                     app:drawableStartCompat="@drawable/ic_location"
+                    android:drawablePadding="4dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/weather_temperature"
+                    app:layout_constraintTop_toBottomOf="@id/weather_icon"
                     app:layout_constraintBottom_toBottomOf="@id/weather_temperature" />
+
+                <ImageView
+                    android:id="@+id/weather_icon"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    app:imageSrc="@{weather.icon}"
+                    app:layout_constraintStart_toStartOf="@id/weather_feels_like"
+                    app:layout_constraintTop_toTopOf="@id/weather_temperature"
+                    app:layout_constraintBottom_toTopOf="@id/weather_feels_like"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    />
 
                 <TextView
                     android:id="@+id/weather_description"
@@ -87,6 +115,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:textSize="30sp"
+                    android:text="@{weather.description}"
                     app:layout_constraintTop_toBottomOf="@id/weather_temperature"
                     app:layout_constraintStart_toStartOf="parent"
                     tools:text="Soleado" />
@@ -97,6 +126,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:textColor="@color/white"
+                    app:temperature="@{weather.maxTemperature}"
                     app:drawableStartCompat="@drawable/ic_up"
                     app:layout_constraintTop_toBottomOf="@id/weather_description"
                     app:layout_constraintStart_toStartOf="parent"
@@ -109,11 +139,78 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:gravity="center"
+                    app:temperature="@{weather.minTemperature}"
                     app:drawableStartCompat="@drawable/ic_down"
                     app:layout_constraintBaseline_toBaselineOf="@id/weather_max_value"
                     app:layout_constraintStart_toEndOf="@id/weather_max_value"
+                    app:layout_constraintBottom_toTopOf="@id/container_sunset"
                     tools:text="30C" />
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/container_sunset"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:padding="8dp"
+                    android:background="@drawable/bg_chip"
+                    app:layout_constraintTop_toBottomOf="@id/weather_min_value"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <TextView
+                        android:id="@+id/sunset_sunrise_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:text="Amanecer y ocaso"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        />
+                    <ImageView
+                        android:id="@+id/icon_sunrise"
+                        android:layout_width="65dp"
+                        android:layout_height="65dp"
+                        android:src="@drawable/ic_sunrise"
+                        app:tint="@color/white"
+                        app:layout_constraintTop_toBottomOf="@id/sunset_sunrise_title"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/icon_sunset"
+                        />
+                    <TextView
+                        android:id="@+id/time_sunrise"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        app:timezone="@{weather.timezone}"
+                        app:sunValue="@{weather.sunrise}"
+                        app:layout_constraintTop_toBottomOf="@id/icon_sunrise"
+                        app:layout_constraintStart_toStartOf="@id/icon_sunrise"
+                        app:layout_constraintEnd_toEndOf="@id/icon_sunrise"
+                        tools:text="05:00"
+                        />
+                    <ImageView
+                        android:id="@+id/icon_sunset"
+                        android:layout_width="65dp"
+                        android:layout_height="65dp"
+                        android:src="@drawable/ic_sunset"
+                        app:tint="@color/white"
+                        app:layout_constraintTop_toBottomOf="@id/sunset_sunrise_title"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/icon_sunrise"
+                        />
+                    <TextView
+                        android:id="@+id/time_sunset"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        app:timezone="@{weather.timezone}"
+                        app:sunValue="@{weather.sunset}"
+                        app:layout_constraintTop_toBottomOf="@id/icon_sunset"
+                        app:layout_constraintStart_toStartOf="@id/icon_sunset"
+                        app:layout_constraintEnd_toEndOf="@id/icon_sunset"
+                        tools:text="05:00"
+                        />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
