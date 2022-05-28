@@ -6,10 +6,17 @@
     <data>
         <import type="java.util.List"/>
         <import type="com.architechcoders.domain.Weather"/>
+        <import type="android.view.View"/>
 
         <variable
             name="weathers"
             type="List&lt;Weather>" />
+        <variable
+            name="permissionGranted"
+            type="Boolean" />
+        <variable
+            name="loading"
+            type="Boolean" />
     </data>
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -22,6 +29,23 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="@{permissionGranted ? View.GONE : View.VISIBLE}"
+            android:text="@string/main_location_permission_not_granted"
+            android:textColor="@color/white"
+            android:padding="16dp"
+            />
+
+        <ProgressBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:visibility="@{loading ? View.VISIBLE : View.GONE}"
             />
 
         <androidx.recyclerview.widget.RecyclerView

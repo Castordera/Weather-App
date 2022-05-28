@@ -6,11 +6,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.architechcoders.weather.R
 import com.architechcoders.weather.databinding.FragmentMainWeatherBinding
-import com.architechcoders.weather.ui.fragments.utils.launchOnLifecycle
+import com.architechcoders.weather.ui.fragments.utils.distinctCollect
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 
 @AndroidEntryPoint
 class WeatherMainFragment: Fragment(R.layout.fragment_main_weather) {
@@ -31,22 +29,24 @@ class WeatherMainFragment: Fragment(R.layout.fragment_main_weather) {
             }
         }
         binding.recyclerWeather.adapter = adapter
-        viewLifecycleOwner.launchOnLifecycle {
-            viewModel.uiState.map { it.weatherList }.distinctUntilChanged().collect {
-                binding.weathers = it
+        viewLifecycleOwner.distinctCollect(viewModel.uiState, { it.weatherList }) {
+            binding.weathers = it
+        }
+        viewLifecycleOwner.distinctCollect(viewModel.uiState, { it.error }) {
+            it?.also {
+                Snackbar.make(
+                    binding.recyclerWeather,
+                    stateHolder.getError(it),
+                    Snackbar.LENGTH_LONG
+                ).show()
+                viewModel.onErrorHandled()
             }
         }
-        viewLifecycleOwner.launchOnLifecycle {
-            viewModel.uiState.map { it.error }.distinctUntilChanged().collect {
-                it?.also {
-                    Snackbar.make(
-                        binding.recyclerWeather,
-                        stateHolder.getError(it),
-                        Snackbar.LENGTH_LONG
-                    ).show()
-                    viewModel.onErrorHandled()
-                }
-            }
+        viewLifecycleOwner.distinctCollect(viewModel.uiState, { it.permissionGranted }) {
+            binding.permissionGranted = it
+        }
+        viewLifecycleOwner.distinctCollect(viewModel.uiState, { it.loading }) {
+            binding.loading = it
         }
         stateHolder.requestLocationPermission {
             viewModel.onLocationPermissionReady(it)

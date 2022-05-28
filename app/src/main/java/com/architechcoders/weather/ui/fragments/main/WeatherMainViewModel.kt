@@ -7,6 +7,7 @@ import com.architechcoders.domain.Weather
 import com.architechcoders.usecase.AddNewWeatherUseCase
 import com.architechcoders.usecase.GetCurrentLocationWeatherUseCase
 import com.architechcoders.usecase.GetWeathersUseCase
+import com.architechcoders.weather.data.utils.toError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -25,15 +26,17 @@ class WeatherMainViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             getWeathersUseCase()
-                .catch {  }
-                .collect { list -> _uiState.update { it.copy(weatherList = list) } }
+                .onStart { _uiState.update { it.copy(loading = true) } }
+                .catch { error -> _uiState.update { it.copy(error = error.toError(), loading = false) } }
+                .collect { list -> _uiState.update { it.copy(weatherList = list, loading = false) } }
         }
     }
 
     fun onAddNewWeatherLocation(city: String) {
         viewModelScope.launch {
+            _uiState.update { it.copy(loading = true) }
             val response = addNewWeatherUseCase(city)
-            _uiState.update { it.copy(error = response) }
+            _uiState.update { it.copy(error = response, loading = false) }
         }
     }
 
@@ -41,8 +44,9 @@ class WeatherMainViewModel @Inject constructor(
         viewModelScope.launch {
             if (permissionGranted) {
                 val response = getCurrentLocationWeatherUseCase()
-                _uiState.update { it.copy(error = response) }
-//                println("DEMO, VM => $response")
+                _uiState.update { it.copy(error = response, permissionGranted = true) }
+            } else {
+                _uiState.update { it.copy(permissionGranted = false) }
             }
         }
     }
@@ -54,6 +58,7 @@ class WeatherMainViewModel @Inject constructor(
     data class UiState(
         val loading: Boolean = false,
         val weatherList: List<Weather>? = null,
-        val error: Errors? = null
+        val error: Errors? = null,
+        val permissionGranted: Boolean = true
     )
 }

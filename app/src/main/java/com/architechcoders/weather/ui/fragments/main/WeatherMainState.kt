@@ -55,9 +55,10 @@ class WeatherMainState(
         }
     }
 
-    fun getError(error: Errors): String = when(error) {
-        is Errors.Database -> "Database error: ${error.message}"
-        is Errors.Server -> "Server error: ${error.code}"
+    fun getError(error: Errors): String = when (error) {
+        is Errors.Database.SaveFailed -> "City already added"
+        is Errors.Device.NoNetwork -> "Network not available"
+        is Errors.Server.Unauthorized -> "Wrong API key"
         is Errors.Unknown -> "Unknown error: ${error.message}"
     }
 }
