@@ -1,8 +1,24 @@
 <resources>
-    <string name="app_name">WeatherApp</string>
+    <string name="app_name">Weather App</string>
     <string name="cancel">Cancel</string>
     <string name="menu_add">Add new location</string>
+    <string name="menu_refresh">Refresh</string>
+    <string name="menu_delete">Delete</string>
+    <string name="main_location_permission_not_granted">Location permission not granted</string>
     <string name="dialog_add_weather_title">Add new location</string>
     <string name="dialog_add_weather_button_success">Add</string>
     <string name="dialog_add_weather_hint">City name</string>
+    <string name="temperature_celsius_annotation">%sºC</string>
+    <string name="detail_weather_title_sun_movement">Sunrise and Sunset</string>
+    <string name="detail_weather_last_update">Last update %s</string>
+    <string name="detail_weather_detail">Details</string>
+    <string name="detail_weather_detail_wind">Wind Speed: %s</string>
+    <string name="detail_weather_detail_humidity">Humidity: %s</string>
+    <string name="detail_weather_detail_pressure">Pressure: %s</string>
+
+    <plurals name="detail_weather_last_update_minutes">
+        <item quantity="zero">Last update a moment ago</item>
+        <item quantity="one">Last update one minute ago</item>
+        <item quantity="other">Last update %d minutes ago</item>
+    </plurals>
 </resources>
