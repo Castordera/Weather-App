@@ -25,8 +25,8 @@ data class Weather(
 val Weather.isDayTime: Boolean
 get() {
     val zoneOffset = ZoneOffset.ofTotalSeconds(timezone)
-    val reqTime = Instant.ofEpochMilli(timeRequested * 1000).atOffset(zoneOffset)
-    val sunsetTime = Instant.ofEpochMilli(sunset * 1000).atOffset(zoneOffset)
-    val sunriseTime = Instant.ofEpochMilli(sunrise * 1000).atOffset(zoneOffset)
+    val reqTime = Instant.ofEpochMilli(timeRequested).atOffset(zoneOffset)
+    val sunsetTime = Instant.ofEpochSecond(sunset).atOffset(zoneOffset)
+    val sunriseTime = Instant.ofEpochSecond(sunrise).atOffset(zoneOffset)
     return reqTime.isBefore(sunsetTime) && reqTime.isAfter(sunriseTime)
 }
