@@ -61,7 +61,9 @@ android {
 
         implementation libs.service.location
 
-        testImplementation libs.junit
+        testImplementation libs.coroutine.test
+        testImplementation libs.bundles.unit.test
+        testImplementation libs.turbine
 
         androidTestImplementation libs.bundles.android.test
     }
