@@ -14,6 +14,8 @@ import com.architechcoders.weather.data.database.WeatherDatabase
 import com.architechcoders.weather.data.database.WeatherRoomDataSource
 import com.architechcoders.weather.data.server.WeatherServerDataSource
 import com.architechcoders.weather.data.server.WeatherService
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -58,6 +60,11 @@ object AppModule {
 
         return retrofit.create()
     }
+
+    @Provides
+    @Singleton
+    fun provideFuseLocationProvider(app: Application): FusedLocationProviderClient =
+        LocationServices.getFusedLocationProviderClient(app)
 }
 
 @Module
