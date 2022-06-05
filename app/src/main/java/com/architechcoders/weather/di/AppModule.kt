@@ -46,14 +46,19 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideWeatherService(): WeatherService {
+    @ApiUrl
+    fun provideApiUrl(): String = "https://api.openweathermap.org/data/2.5/"
+
+    @Provides
+    @Singleton
+    fun provideWeatherService(@ApiUrl apiUrl: String): WeatherService {
         val okHttpClient = HttpLoggingInterceptor().run {
             level = HttpLoggingInterceptor.Level.BODY
             OkHttpClient.Builder().addInterceptor(this).build()
         }
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://api.openweathermap.org/data/2.5/")
+            .baseUrl(apiUrl)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -82,6 +87,11 @@ abstract class AppDataModule {
 
     @Binds
     abstract fun bindWeatherRemoteDataSource(remoteDataSource: WeatherServerDataSource): WeatherRemoteDataSource
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class LocationModule {
 
     @Binds
     abstract fun bindLocationDataSource(locationDataSource: AndroidLocationDataSource): LocationDataSource

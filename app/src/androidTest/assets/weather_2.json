@@ -1,0 +1,44 @@
+{
+  "coord": {
+    "lon": -99.9167,
+    "lat": 21
+  },
+  "weather": [
+    {
+      "id": 804,
+      "main": "Clouds",
+      "description": "overcast clouds",
+      "icon": "04d"
+    }
+  ],
+  "base": "stations",
+  "main": {
+    "temp": 19.55,
+    "feels_like": 18.89,
+    "temp_min": 19.55,
+    "temp_max": 19.55,
+    "pressure": 1013,
+    "humidity": 51,
+    "sea_level": 1013,
+    "grnd_level": 816
+  },
+  "visibility": 10000,
+  "wind": {
+    "speed": 0.6,
+    "deg": 84,
+    "gust": 0.61
+  },
+  "clouds": {
+    "all": 90
+  },
+  "dt": 1654435912,
+  "sys": {
+    "country": "MX",
+    "sunrise": 1654430262,
+    "sunset": 1654478338
+  },
+  "timezone": -18000,
+  "id": 3520914,
+  "name": "San Luis Potosi",
+  "cod": 200
+}

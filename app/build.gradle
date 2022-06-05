@@ -15,7 +15,7 @@ android {
         targetSdk 31
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.architechcoders.weather.di.HiltTestRunner"
         buildConfigField "String", "API_KEY", "\"22e8d99e1ae706b581a76b9cb3db06c5\""
     }
 
@@ -66,5 +66,9 @@ android {
         testImplementation libs.turbine
 
         androidTestImplementation libs.bundles.android.test
+        androidTestImplementation libs.hilt.test
+        kaptAndroidTest libs.hilt.compiler
+        androidTestImplementation libs.coroutine.test
+        androidTestImplementation libs.mock.server
     }
 }
